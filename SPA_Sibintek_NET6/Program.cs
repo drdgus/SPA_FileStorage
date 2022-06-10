@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.EntityFrameworkCore;
 using SPA_Sibintek_NET6.API.Core.DAL.Repositories;
 using DbContext = SPA_Sibintek_NET6.API.Core.DAL.DbContext;

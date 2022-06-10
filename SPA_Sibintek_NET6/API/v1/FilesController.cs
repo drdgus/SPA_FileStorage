@@ -1,4 +1,5 @@
 ﻿using System.Net.Mime;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SPA_Sibintek_NET6.API.Core.DAL.Entities;
 using SPA_Sibintek_NET6.API.Core.DAL.Repositories;
@@ -6,6 +7,7 @@ using SPA_Sibintek_NET6.API.Core.Models;
 
 namespace SPA_Sibintek_NET6.API.v1
 {
+
 #if !DEBUG
     [Authorize]
 #endif
