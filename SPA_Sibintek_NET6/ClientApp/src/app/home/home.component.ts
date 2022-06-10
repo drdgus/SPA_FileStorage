@@ -1,29 +1,39 @@
-import {Component} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 
 import {Md5} from 'ts-md5/dist/md5';
 import {saveAs} from 'file-saver';
 import {MatSnackBar} from "@angular/material/snack-bar";
+import {MatTableDataSource} from "@angular/material/table";
+import {MatPaginator} from "@angular/material/paginator";
+import {MatSort} from "@angular/material/sort";
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
   public files!: UserFile[];
   public canUpload!: boolean;
+  public displayedColumns: string[] = ['name', 'uploadDateTime', 'download', 'delete'];
+  public dataSource!: MatTableDataSource<UserFile>;
 
   private selectedFile!: File;
   private selectedFileMD5!: string;
 
   private http: HttpClient;
-  private snackBar: MatSnackBar;
+  private snackBar: MatSnackBar
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort = new MatSort();
 
   constructor(http: HttpClient, snackBar: MatSnackBar) {
     this.snackBar = snackBar;
     this.http = http;
     http.get<UserFile[]>('/api/v1/Files/').subscribe(result => {
       this.files = result;
+      this.setTableDataSource();
     }, error => this.openErrorSnackBar(error));
   }
 
@@ -37,8 +47,7 @@ export class HomeComponent {
       this.canUpload = true;
       this.selectedFile = file;
       this.selectedFileMD5 = md5;
-    } else
-    {
+    } else {
       this.openErrorSnackBar('Этот файл уже загружен.');
       this.canUpload = false;
     }
@@ -53,13 +62,16 @@ export class HomeComponent {
     formData.append('md5', this.selectedFileMD5);
 
     this.http.post('api/v1/Files/Add/', formData).subscribe(result => {
-      this.openInfoSnackBar('Файл загружен.');
+        this.openInfoSnackBar('Файл загружен.');
 
-      this.files.push(result as UserFile);
-    }, error => {
-      this.canUpload = true;
-      this.openErrorSnackBar(error);
-    });
+        this.files.push(result as UserFile);
+        this.setTableDataSource();
+      }
+      , error => {
+        this.canUpload = true;
+        console.log(JSON.stringify(error));
+        this.openErrorSnackBar(error);
+      });
   }
 
   public downloadFile(file: UserFile) {
@@ -98,6 +110,21 @@ export class HomeComponent {
 
   private openInfoSnackBar(message: string) {
     this.snackBar.open(message)._dismissAfter(3 * 1000);
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  private setTableDataSource() {
+    this.dataSource = new MatTableDataSource(this.files);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 }
 
