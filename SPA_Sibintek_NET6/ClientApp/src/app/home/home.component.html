@@ -1,0 +1,39 @@
+<div class="row">
+  <div class="col-6 p-0">
+    <div class="input-group">
+      <input type="file" class="form-control" (change)="onFileSelected($event)">
+      <button class="input-group-text btn"
+              [class.btn-outline-primary]="!canUpload"
+              [class.btn-primary]="canUpload"
+              [disabled]="!canUpload"
+              (click)="uploadFile()">
+        Загрузить
+      </button>
+    </div>
+  </div>
+</div>
+<p *ngIf="!files"><em>Loading...</em></p>
+<div class="row mt-4">
+  <table class='table table-striped' aria-labelledby="tableLabel" *ngIf="files">
+    <thead>
+    <tr>
+      <th>Название</th>
+      <th>Дата загрузки</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let file of files">
+      <td>{{ file.name }}</td>
+      <td>{{ file.uploadDateTime | date:"d MMM, y, HH:mm:ss"}}</td>
+      <td>
+        <a class="btn-link" style="cursor: pointer"  (click)="downloadFile(file)">Скачать</a>
+      </td>
+      <td>
+        <a class="btn-link" style="cursor: pointer" (click)="deleteFile(file)">Удалить</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+<!--  <app-files-table [Files]="files"></app-files-table>-->
+</div>
