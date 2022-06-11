@@ -61,7 +61,7 @@ namespace SPA_Sibintek_NET6.API.v1
         public async Task<IActionResult> AddNewFile([FromForm] IFormFile file, [FromForm] string md5, [FromForm] string contentType)
         {
             if (file.Length == 0) return BadRequest("File is empty.");
-            if (file.Length > int.MaxValue) return BadRequest("File too large.");
+            if (file.Length > MaxFileLength) return BadRequest("File too large. Max file length 1GB.");
 
             await using var stream = new MemoryStream((int)file.Length);
             await file.CopyToAsync(stream);

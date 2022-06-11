@@ -40,6 +40,11 @@ export class HomeComponent {
   public async onFileSelected($event: any): Promise<void> {
     const file = $event.target.files[0] as File;
 
+    if(file.name.length > 300){
+      this.openErrorSnackBar('Имя файла слишком длинное.')
+      return;
+    }
+
     const fileBytes = new Uint8Array(await file.arrayBuffer());
     const md5 = this.checkMD5(fileBytes);
 
