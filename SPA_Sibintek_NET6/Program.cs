@@ -19,7 +19,7 @@ builder.Services.AddAuthorization(options =>
 #endif
 
 builder.Services.AddDbContext<DbContext>(options =>
-    options.UseNpgsql("Host=192.168.1.4;Port=49872;Database=sibintek;Username=postgres;Password=kT$3Q5_E?8hAe%6$;"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 builder.Services.AddScoped<IFileRepository, FileRepository>();
@@ -43,7 +43,6 @@ using (var scope = app.Services.CreateScope())
 
     var context = services.GetRequiredService<DbContext>();
     context.Database.EnsureCreated();
-    //DbInitializer.Initialize(context);
 }
 
 app.UseHttpsRedirection();
