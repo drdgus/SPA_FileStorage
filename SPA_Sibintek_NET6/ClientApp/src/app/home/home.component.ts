@@ -26,7 +26,7 @@ export class HomeComponent {
   private snackBar: MatSnackBar
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort = new MatSort();
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(http: HttpClient, snackBar: MatSnackBar) {
     this.snackBar = snackBar;
@@ -100,6 +100,7 @@ export class HomeComponent {
     const index = this.files.indexOf(file, 0);
     if (index > -1) {
       this.files.splice(index, 1);
+      this.updatePaginatorAndSorting();
     }
   }
 
@@ -128,6 +129,10 @@ export class HomeComponent {
 
   private setTableDataSource() {
     this.dataSource = new MatTableDataSource(this.files);
+    this.updatePaginatorAndSorting();
+  }
+
+  private updatePaginatorAndSorting(){
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
