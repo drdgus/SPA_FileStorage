@@ -80,8 +80,9 @@ export class HomeComponent {
   }
 
   public downloadFile(file: UserFile) {
-    this.http.get('api/v1/Files/Download/' + file.id, {responseType: 'blob'}).subscribe(result => {
-      saveAs(result, file.name)
+    this.http.get('api/v1/Files/Download/' + file.id, {responseType: 'blob'}).subscribe(result =>
+    {
+      saveAs(result, file.name);
     }, error => {
       this.openErrorSnackBar(error);
     });
